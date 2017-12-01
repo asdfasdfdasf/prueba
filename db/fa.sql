@@ -1,54 +1,61 @@
+DROP TABLE IF EXISTS "peliculas" CASCADE;
+DROP TABLE IF EXISTS "generos"   CASCADE;
+DROP TABLE IF EXISTS "usuarios"  CASCADE;
 
-DROP TABLE IF EXISTS generos CASCADE;
-
-CREATE TABLE generos
+CREATE TABLE "generos"
 (
-    id     BIGSERIAL    PRIMARY KEY
-  , genero VARCHAR(255) NOT NULL UNIQUE
+     id     BIGSERIAL       PRIMARY KEY
+   , nombre VARCHAR(255)    NOT NULL UNIQUE
 );
 
-DROP TABLE IF EXISTS peliculas CASCADE;
-
-CREATE TABLE peliculas
+CREATE TABLE "peliculas"
 (
-    id        BIGSERIAL    PRIMARY KEY
-  , titulo    VARCHAR(255) NOT NULL
-  , anyo      NUMERIC(4)
-  , sinopsis  TEXT
-  , duracion  SMALLINT     DEFAULT 0
-                           CONSTRAINT ck_peliculas_duracion_positiva
-                           CHECK (coalesce(duracion, 0) >= 0)
-  , genero_id BIGINT       NOT NULL
-                           REFERENCES generos (id)
-                           ON DELETE NO ACTION
-                           ON UPDATE CASCADE
+     id        BIGSERIAL       PRIMARY KEY
+   , titulo    VARCHAR(255)    NOT NULL
+   , sipnosis  TEXT
+   , anyo      NUMERIC(4)
+   , duracion  NUMERIC(3)      DEFAULT 0
+                               CONSTRAINT ck_peliculas_duracion_positiva
+                               CHECK (coalesce(duracion, 0) >= 0)
+   , genero_id BIGINT          NOT NULL
+                               REFERENCES generos (id)
+                               ON DELETE NO ACTION
+                               ON UPDATE CASCADE
 );
+
+CREATE TABLE "usuarios"
+(
+    id          BIGSERIAL       PRIMARY KEY
+  , nombre      VARCHAR(255)    UNIQUE
+  , password    VARCHAR(60)
+
+);
+
+-- Vistas
+CREATE VIEW "viewPeliculas" AS
+    SELECT P."id", P."titulo", P."sipnosis", P."anyo", P."duracion", P."genero_id", G."nombre" as "genero" FROM "peliculas" P JOIN "generos" G ON (P."genero_id" = G."id");
+;
+
+-- Funciones
+
 
 -- INSERT
 
-INSERT INTO generos (genero)
+DELETE FROM "generos";
+INSERT INTO "generos" (nombre)
 VALUES ('Comedia')
      , ('Terror')
      , ('Ciencia-Ficción')
      , ('Drama')
      , ('Aventuras');
 
-INSERT INTO peliculas (titulo, anyo, sinopsis, duracion, genero_id)
-VALUES ('Los últimos Jedi', 2017, 'Va uno y se cae...', 204, 3)
-     , ('Los Goonies', 1985, 'Unos niños encuentran un tesoro', 120, 5)
-     , ('Aquí llega Condemor', 1996, 'Mejor no cuento nada...', 90, 1);
+DELETE FROM "peliculas";
+INSERT INTO "peliculas" (titulo, sipnosis, anyo, duracion, genero_id)
+VALUES ('Los Últimos Jedi', 'Va uno y se cae...', 2017, 204, 3)
+     , ('Los Goonies', 'Unos niños encuentran un tesoro', 1984, 120, 5)
+     , ('Aquí llega Condemor', 'Mejor no cuento nada...', 1996, 90, 1);
 
-DROP TABLE IF EXISTS usuarios CASCADE;
-
-CREATE TABLE usuarios
-(
-    id       BIGSERIAL    PRIMARY KEY
-  , usuario  VARCHAR(255) NOT NULL UNIQUE
-                          CONSTRAINT ck_usuarios_usuario_sin_espacios
-                          CHECK (position(' ' in usuario) = 0)
-  , password VARCHAR(255) NOT NULL
-);
-
-INSERT INTO usuarios (usuario, password)
-VALUES ('pepe', crypt('pepe', gen_salt('bf', 10)))
-     , ('juan', crypt('juan', gen_salt('bf', 10)));
+DELETE FROM "usuarios";
+INSERT INTO "usuarios" (nombre, password)
+VALUES ('manuel', crypt('1234manuel', gen_salt('bf', 10)))
+     , ('pepe', crypt('1234pepe', gen_salt('bf', 10)));

@@ -1,73 +1,64 @@
-<?php session_start() ?>
+<?php require_once 'php/G_login.php' ?>
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-        <style type="text/css">
-            .container {
-                margin-top: 24px;
-            }
-        </style>
+
         <title>Login</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+
     </head>
+
     <body>
-        <div class="container">
-            <?php
-            require 'auxiliar.php';
-
-            $usuario = trim(filter_input(INPUT_POST, 'usuario'));
-            $password = trim(filter_input(INPUT_POST, 'password'));
-
-            if (!empty($_POST)) {
-                $error = [];
-                try {
-                    comprobarUsuario($usuario, $error);
-                    comprobarPassword($password, $error);
-                    comprobarErrores($error);
-                    $fila = buscarUsuario($usuario, $password, $error);
-                    $_SESSION['usuario'] = [
-                        'id' => $fila['id'],
-                        'nombre' => $fila['usuario'],
-                    ];
-                    header('Location: index.php');
-                } catch (Exception $e) {
-                    mostrarErrores($error);
-                }
-            }
-            ?>
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-md-offset-4 col-md-4">
-                    <form action="login.php" method="post">
+                <div class="col-lg-offset-4 col-lg-4 page-header">
+                    <h1>Login</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-offset-4 col-lg-4">                    
+                    <form class="form-horizontal form-login" action="login.php" method="post">
                         <div class="form-group">
-                            <label for="usuario">Usuario *</label>
-                            <input type="text" class="form-control"
-                                id="usuario"
-                                name="usuario"
-                                placeholder="Nombre de usuario"
-                                value="<?= h($usuario) ?>" >
+                            <label for="usuario" class="col-sm-2 control-label">Usuario</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="usuario" name="usuario">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="password">Contraseña *</label>
-                            <input type="password" class="form-control"
-                                id="password"
-                                name="password"
-                                placeholder="Contraseña">
+                            <label for="password" class="col-sm-2 control-label">Contraseña</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="password" name="password">
+                            </div>
                         </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox"> Recuérdame
-                            </label>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox">
+                                    <label><input type="checkbox"> Recuérdame</label>
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-default">Login</button>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-primary">Entrar</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
+
+            <?php mostrarErrores($errores) ?>
+
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
     </body>
+
 </html>

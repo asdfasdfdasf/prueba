@@ -1,5 +1,4 @@
 <?php
-
 /**
 * @author Manuel Cuevas Rodriguez
 * @copyright Copyright (c) 2017 Manuel Cuevas Rodriguez
@@ -7,9 +6,14 @@
 */
 
 require_once 'php/F_Session.php'; SessionAuth();
+require_once 'php/F_DB.php';
+
+$id = trim(filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT));
 
 try {
-    SessionCerrarSesionUsuario();
+    $bBorrarPelicula = DBborrarPelicula($id);    
+    SessionMensajeModificar('La película se ha borrado correctamente');
+
 } catch (Exception $e){
     SessionMensajeModificar($e->getMessage());
 }
