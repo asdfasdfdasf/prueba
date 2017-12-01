@@ -1,18 +1,22 @@
 <?php
+session_start();
 
-/**
-* @author Manuel Cuevas Rodriguez
-* @copyright Copyright (c) 2017 Manuel Cuevas Rodriguez
-* @license https://www.gnu.org/licenses/gpl.txt
-*/
+require 'auxiliar.php';
 
-require_once 'php/F_Session.php'; SessionAuth();
-
-try {
-    SessionCerrarSesionUsuario();
-} catch (Exception $e){
-    SessionMensajeModificar($e->getMessage());
+if (!comprobarLogueado()) {
+    return;
 }
 
+$_SESSION = [];
+$params = session_get_cookie_params();
+setcookie(
+    session_name(),         // nombre
+    '',                     // valor
+    1,                      // tiempo de expiración (1970-01-01 00:00:01)
+    $params['path'],        // ruta
+    $params['domain'],      // dominio
+    $params['secure'],      // secure
+    $params['httponly']     // httponly
+);
+session_destroy();
 header('Location: index.php');
-exit;

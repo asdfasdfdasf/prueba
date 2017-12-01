@@ -1,45 +1,39 @@
-<?php require_once 'php/G_borrar.php' ?>
+<?php session_start() ?>
 <!DOCTYPE html>
-<html lang="es">
+<html>
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Confirmar borrado</title>
-
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/style.css" rel="stylesheet">
-
+        <title>Confirmación de borrado</title>
     </head>
-
     <body>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-offset-1 col-lg-4 page-header">
-                    <h1>Confirmar borrado</h1>
-                </div>
-            </div>
+        <?php
+        require 'auxiliar.php';
 
-            <div class="row">
-                <div class="col-lg-offset-4 col-lg-5">
-                    <h3>¿Está seguro que quiere borrar la película <b>"<?= h($titulo) ?></b>"?</h3>
+        if (!comprobarLogueado()) {
+            return;
+        }
 
-                    <form action="hacer-borrado.php" method="post">
-                        <input type="hidden" name="id" value="<?= h($id) ?>">
-                        <button type="submit" class="btn btn-default">Si</button>
-                        <a class="btn btn-primary" href="index.php" role="button">No</a>
-                    </form>                                        
-
-                </div>
-
-            </div>
-
-        </div>        
-
-        <script src="js/jquery-3.2.1.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-    
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) ?? false;
+        try {
+            $error = [];
+            comprobarParametro($id, $error);
+            $pdo = conectar();
+            $fila = buscarPelicula($pdo, $id, $error);
+            comprobarErrores($error);
+            ?>
+            <h3>
+                ¿Seguro que desea borrar la película <?= $fila['titulo'] ?>?
+            </h3>
+            <form action="hacer_borrado.php" method="post">
+                <input type="hidden" name="id" value="<?= $id ?>" />
+                <input type="submit" value="Sí" />
+                <input type="submit" value="No"
+                       formaction="index.php" formmethod="get" />
+            </form>
+            <?php
+        } catch (Exception $e) {
+            mostrarErrores($error);
+        }
+        ?>
     </body>
-
 </html>
